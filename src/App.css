@@ -31,3 +31,61 @@
     transform: rotate(360deg);
   }
 }
+
+body{
+  background-color: #f3f3f4;
+  
+}
+
+.mycard {
+  background-color: white;
+  padding: 0px;
+}
+.mycard img{
+  border-bottom: 0.5px solid #4ec697
+}
+
+.buttongenre{
+  background-color:lightgrey;
+  border: 1px solid lightgrey;
+  color: black;
+  font-size: 9px;
+  font-weight: bolder;
+  padding: 5px;
+  text-align: center;
+
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.headername {
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: bolder;
+  text-align: center;
+  text-transform: uppercase;
+  color: white;
+}
+
+.adminbackcolor { 
+  
+}
+
+.mycard .logo {
+  position: absolute;
+  top: 1%;
+  left: 90%;
+
+  background-color: lightskyblue;
+  color: white;
+
+  border: none;
+  padding: 5px 10px 5px 10px;
+
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+ 
+  border-radius: 50%;
+}

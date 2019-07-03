@@ -35,7 +35,7 @@ class movielist extends React.Component{
         var output = this.state.data.map((val) => {
             return(
         
-                    <div className="col-md-3 mycard mr-3 ml-3 mb-3 ">
+                    <div className="col-md-3 mycard mr-1 ml-1 mb-1 ">
                         <img src={val.image} alt='MovieImage' width='100%' height="422px"/>
                         <div class="logo"> {val.id} </div>
                         <div className="mb-2" style={{fontWeight : "bolder", fontFamily : "sans-serif", fontSize : "16px"}}> {val.title} </div>
@@ -63,7 +63,7 @@ class movielist extends React.Component{
     render(){
         return (
             
-            <div className='container mt-5 '>
+            <div className='container mt-5'>
                 <h1>Movie List</h1>
                 <div className="row justify-content-center">
                 {this.printMovieData()}

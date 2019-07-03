@@ -26,6 +26,7 @@ class manageMovie extends React.Component{
         genreList : [],
         showSynopsis : false,
         currentSynopsis : null,
+        selectedEdit : 0,
     }
     componentDidMount(){
         this.getDataMovies()
@@ -44,6 +45,8 @@ class manageMovie extends React.Component{
             console.log(error)
         })
     }
+
+    
     synopsisPrint = (text) => {
         //PANGGIL synopsisprint(synopsis, id)
         // IF state currentsyn === id >> print semua
@@ -70,43 +73,63 @@ class manageMovie extends React.Component{
         
 
         var output = this.state.data.map((val,index) => {
-            return(
-                <TableRow>
+            if(val.id === this.state.selectedEdit){
+                return(
+                    <TableRow>
                     <TableCell>{index+1}</TableCell>
-                    <TableCell>{val.title}</TableCell>
-                    <TableCell>{val.genre}</TableCell>
-                    <TableCell><img src={val.image} height="50px" alt=""></img></TableCell>
-                    <TableCell>{val.director}</TableCell>
-                    <TableCell>{val.playingTime.join(",")}</TableCell>
-                    <TableCell>{val.duration} Minutes</TableCell>
-                    <TableCell> 
-                    {
-                    this.state.showSynopsis === false ? 
-                    <div>
-                    {this.synopsisPrint(val.synopsis)}
-                    <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
-                    </div>
-                    :
-                    this.state.showSynopsis === true && ((this.state.currentSynopsis === val.id) === false) ?
-                    <div>
-                    {this.synopsisPrint(val.synopsis)}
-                    <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
-                    </div>
-                    :
-                    this.state.showSynopsis === true &&  ((this.state.currentSynopsis === val.id) === true) ?
-                    <div>
-                    {this.fullSynopsisPrint()}
-                    </div>
-                    :
-                    null
-                    }
-                    </TableCell>
+                    <TableCell><input type="text" ref="inputtitle" className="form-control" defaultValue={val.title}/></TableCell>
+                    <TableCell><input type="text" ref="inputgenre" className="form-control" defaultValue={val.genre}/></TableCell>
+                    <TableCell><input type="text" ref="inputimage" className="form-control" defaultValue={val.image}/></TableCell>
+                    <TableCell><input type="text" ref="inputdirector" className="form-control"  defaultValue={val.director}/></TableCell>
+                    <TableCell><input type="text" ref="inputpt" className="form-control"  defaultValue={val.playingTime.join(",")}/></TableCell>
+                    <TableCell><input type="text" ref="inputdur" className="form-control"  defaultValue={val.duration}/></TableCell>
+                    <TableCell><textarea className="form-control" ref="inputsynopsis" defaultValue={val.synopsis}/></TableCell>
                     <TableCell>
-                        <div><input type="button" value="edit" className="btn btn-block btn-primary btn-sm"></input>
-                        <input type="button" value="delete" className="btn btn-block btn-danger btn-sm"></input></div>
+                        <div><input type="button" value="save" className="btn btn-block btn-success btn-sm" onClick={() => this.btnSaveEditClick()} ></input>
+                        <input type="button" value="cancel" className="btn btn-block btn-danger btn-sm" onClick={() => this.setState({selectedEdit : 0})}></input></div>
                     </TableCell>
                 </TableRow>
-            )
+                )
+            }else{
+                return(
+                    <TableRow>
+                        <TableCell>{index+1}</TableCell>
+                        <TableCell>{val.title}</TableCell>
+                        <TableCell>{val.genre}</TableCell>
+                        <TableCell><img src={val.image} height="50px" alt=""></img></TableCell>
+                        <TableCell>{val.director}</TableCell>
+                        <TableCell>{val.playingTime.join(",")}</TableCell>
+                        <TableCell>{val.duration} Minutes</TableCell>
+                        <TableCell> 
+                        {
+                        this.state.showSynopsis === false ? 
+                        <div>
+                        {this.synopsisPrint(val.synopsis)}
+                        <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
+                        </div>
+                        :
+                        this.state.showSynopsis === true && ((this.state.currentSynopsis === val.id) === false) ?
+                        <div>
+                        {this.synopsisPrint(val.synopsis)}
+                        <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
+                        </div>
+                        :
+                        this.state.showSynopsis === true &&  ((this.state.currentSynopsis === val.id) === true) ?
+                        <div>
+                        {this.fullSynopsisPrint()}
+                        </div>
+                        :
+                        null
+                        }
+                        </TableCell>
+                        <TableCell>
+                            <div><input type="button" value="edit" className="btn btn-block btn-primary btn-sm" onClick={()=>this.buttonEditClick(val.id)}></input>
+                            <input type="button" value="delete" className="btn btn-block btn-danger btn-sm" onClick={()=>this.buttonDeleteClick(val.id, index)}></input></div>
+                        </TableCell>
+                    </TableRow>
+                )
+            }
+           
         })
         return output
     }
@@ -135,24 +158,32 @@ class manageMovie extends React.Component{
         
         // RADIO BUTTON
 
-        if(this.refs.radio1.refs.radio1Inner.checked === true){
-            playingTime.push(9)
+        // if(this.refs.radio1.refs.radio1Inner.checked === true){
+        //     playingTime.push(9)
 
+        // }
+        // if(this.refs.radio2.refs.radio2Inner.checked === true){
+        //     playingTime.push(14)
+        // }
+        // if(this.refs.radio3.refs.radio3Inner.checked === true){
+        //     playingTime.push(17)
+        // }
+        // if(this.refs.radio4.refs.radio4Inner.checked === true){
+        //     playingTime.push(20)
+        // }
+        // if(this.refs.radio5.refs.radio5Inner.checked === true){
+        //     playingTime.push(22)
+        // }
+        var listtime = [9,14,17,20,22]
+        for(var i = 1; i<=5;i++){
+            if(this.refs['radio' + i].refs['radio'+i+'Inner'].checked === true){
+                playingTime.push(listtime[i-1])
+            }
         }
-        if(this.refs.radio2.refs.radio2Inner.checked === true){
-            playingTime.push(14)
-        }
-        if(this.refs.radio3.refs.radio3Inner.checked === true){
-            playingTime.push(17)
-        }
-        if(this.refs.radio4.refs.radio4Inner.checked === true){
-            playingTime.push(20)
-        }
-        if(this.refs.radio5.refs.radio5Inner.checked === true){
-            playingTime.push(22)
-        }
-
         alert(playingTime)
+
+
+       
 
         // END RADIO BUTTON 
         
@@ -187,6 +218,24 @@ class manageMovie extends React.Component{
             
         }
 
+        Axios.post('http://localhost:2000/movies', data)
+        .then((res)=>{
+            
+            window.alert("berhasil add data")
+            var movieData = this.state.data
+            movieData.push(res.data)
+            this.setState({
+                data : movieData
+            })
+            this.closeModal()
+        })
+        .catch((err)=> {
+            console.log(err)
+        })
+        
+        
+        
+   
         
         // const axios = require('axios');
         // axios.post('http://localhost:2000/movies', {
@@ -219,6 +268,85 @@ class manageMovie extends React.Component{
         return jsx
     }           
         
+    buttonEditClick = (id) => {
+        this.setState({
+            selectedEdit : id
+        })
+    }
+    
+    buttonDeleteClick = (id, i) => {
+        var confirm = window.confirm("Are you sure to delete this data ? ")
+        if(confirm){
+            Axios.delete('http://localhost:2000/movies/'+id)
+            .then((res)=>{
+                alert('Delete Data Success')
+                var data = this.state.data
+                data.splice(i, 1)
+                this.setState({
+                    data : data
+                })
+            })
+            .catch((err) => {
+
+            })
+        }
+    }
+    btnSaveEditClick = () => {
+        var title = this.refs.inputtitle.value
+        var director = this.refs.inputdirector.value
+        var genre = this.refs.inputgenre.value
+        var image = this.refs.inputimage.value
+        var playingTime = this.refs.inputpt.value.split(',')
+        var duration = this.refs.inputdur.value
+        var synopsis = this.refs.inputsynopsis.value
+       
+
+        if(title.replace(/\s/g, "") === "" || director.replace(/\s/g, "") === ""
+         || genre.replace(/\s/g, "") === "" || image.replace(/\s/g, "") === ""
+         || playingTime.length === 0 || duration.replace(/\s/g, "") === "" || synopsis.replace(/\s/g, "") === "")
+         
+         {
+           // warning text
+            return window.alert("Form tidak boleh ada yang kosong")
+        }
+        var data = {
+            genre : genre,
+            title : title,
+            duration : duration,
+            synopsis : synopsis,
+            playingTime : playingTime,
+            director : director,
+            image : image
+        }
+        console.log("masuk")
+
+        Axios.put('http://localhost:2000/movies/' + this.state.selectedEdit, data)
+        .then((res) => {
+            console.log(res.data)
+
+            // GAK JALAN
+            // var editeddata = {
+            //     genre : genre,
+            //     title : title,
+            //     duration : duration,
+            //     synopsis : synopsis,
+            //     playingTime : playingTime,
+            //     director : director,
+            //     image : image
+            // }
+            // this.state.data[this.state.selectedEdit] = editeddata
+
+            window.alert("Data sudah berhasil untuk diedit ")
+            this.setState({
+                // data : this.state.data,
+                selectedEdit : 0
+            })
+        })
+        .catch((err)=>{
+            console.log(err)
+            
+        })
+    }
 
     render(){
         return(

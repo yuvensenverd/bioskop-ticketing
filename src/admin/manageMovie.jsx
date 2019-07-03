@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import Container from '@material-ui/core/Container';
 import Axios from 'axios'
 import {EditAttributesRounded, DeleteForeverRounded} from '@material-ui/core' 
+import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 
@@ -28,6 +29,7 @@ class manageMovie extends React.Component{
     }
     componentDidMount(){
         this.getDataMovies()
+        
     }
     getDataMovies = () => {
         Axios.get("http://localhost:2000/movies")
@@ -43,6 +45,10 @@ class manageMovie extends React.Component{
         })
     }
     synopsisPrint = (text) => {
+        //PANGGIL synopsisprint(synopsis, id)
+        // IF state currentsyn === id >> print semua
+        
+        // else print V
         var arr = text.split(" ")
         var synarr = []
         for(var i = 0; i<5; i++){
@@ -54,9 +60,9 @@ class manageMovie extends React.Component{
     
     printMovieData = () => {
 
-        //PRINT GENRE LIST 
+        
         this.state.data.map((val) => {
-            if(this.state.genreList.indexOf(val.genre) == -1){
+            if(this.state.genreList.indexOf(val.genre) === -1){
                 this.state.genreList.push(val.genre)
             }
         })
@@ -73,20 +79,21 @@ class manageMovie extends React.Component{
                     <TableCell>{val.director}</TableCell>
                     <TableCell>{val.playingTime.join(",")}</TableCell>
                     <TableCell>{val.duration} Minutes</TableCell>
-                    <TableCell> {
-                    this.state.showSynopsis == false ? 
+                    <TableCell> 
+                    {
+                    this.state.showSynopsis === false ? 
                     <div>
                     {this.synopsisPrint(val.synopsis)}
                     <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
                     </div>
                     :
-                    this.state.showSynopsis == true && ((this.state.currentSynopsis == val.id) == false) ?
+                    this.state.showSynopsis === true && ((this.state.currentSynopsis === val.id) === false) ?
                     <div>
                     {this.synopsisPrint(val.synopsis)}
                     <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
                     </div>
                     :
-                    this.state.showSynopsis == true &&  ((this.state.currentSynopsis == val.id) == true) ?
+                    this.state.showSynopsis === true &&  ((this.state.currentSynopsis === val.id) === true) ?
                     <div>
                     {this.fullSynopsisPrint()}
                     </div>
@@ -111,7 +118,7 @@ class manageMovie extends React.Component{
        
     }
     fullSynopsisPrint = () => {
-        var id = this.state.currentSynopsis -1
+        var id = this.state.currentSynopsis -1 // -1 karena index state.data dari 0 
         return(
             <p>{this.state.data[id].synopsis}</p>
         )
@@ -122,18 +129,39 @@ class manageMovie extends React.Component{
         var title = this.refs.inputtitle.value
         var director = this.refs.inputdirector.value
         var genre = this.refs.inputgenre.value
-        var imgurl = this.refs.inputurl.value
-        if(title.replace(/\s/g, "") == "" || director.replace(/\s/g, "") == "" || genre.replace(/\s/g, "") == "" || imgurl.replace(/\s/g, "") == ""){
+        var image = this.refs.inputurl.value
+        var playingTime = this.refs.inputpt.value
+        var duration = this.refs.inputduration.value
+        
+        var synopsis = this.refs.inputsynopsis.value
+        if(title.replace(/\s/g, "") === "" || director.replace(/\s/g, "") === ""
+         || genre.replace(/\s/g, "") === "" || image.replace(/\s/g, "") === ""
+         || playingTime.replace(/\s/g, "") === "" || duration.replace(/\s/g, "") === "" || synopsis.replace(/\s/g, "") === "")
+         
+         {
            // warning text
            return document.getElementById("warningbutton").innerHTML = "harap mengisi form yang kosong !  "
         }
        
-        
+        // URL VALIDATION
         var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/; // Dari internet
-        if(!regex .test(imgurl)) {
+        if(!regex .test(image)) {
             return document.getElementById("warningbutton").innerHTML = "url tidak valid!  "
         } else {
-            return document.getElementById("warningbutton").innerHTML = "url valid!  "
+            
+        }
+
+        var data = {
+            genre : genre,
+            title : title,
+            duration : duration,
+            synopsis : synopsis,
+            playingTime : playingTime,
+            director : director,
+            image : image,
+
+            
+            
         }
 
         
@@ -172,22 +200,62 @@ class manageMovie extends React.Component{
     render(){
         return(
             <div class="adminbackcolor">
+                
                 <Container fixed>
                     <h1 className="mt-3"><center>Manage Movie Page</center></h1>
                     <input type="button" value="Add Data" className="btn btn-success mb-2 mt-2" onClick={() => this.setState({modalOpen : true})}></input>
                     {/*MODAL START */}
-                    <Modal isOpen={this.state.modalOpen} >
+                    <Modal isOpen={this.state.modalOpen} toggle={this.closeModal}>
                         <ModalHeader>
                             Add Movie
                         </ModalHeader>
                         <ModalBody>
-                            <input type="text" ref="inputtitle" className="form-control" placeholder="Title"/>
-                            <input type="text" ref="inputdirector" className="form-control" placeholder="Director"/>
-                            <select required id = "myList" ref="inputgenre" className="form-control" placeholder="Genre">
+                            <input type="text" ref="inputtitle" className="form-control mb-2" placeholder="Title"/>
+                            <input type="text" ref="inputdirector" className="form-control mb-2" placeholder="Director"/>
+                            <select required id = "myList" ref="inputgenre" className="form-control mb-2" placeholder="Genre">
                                     <option value="" disabled selected hidden>Choose Genre</option>
                                     {this.printGenreList()}
                             </select>
                             <input type="text" ref="inputurl"  className="form-control mb-2" placeholder="Image Url"/>
+                            {/* <input type="number" ref="inputpt" min="1" max="24" className="form-control mb-2" placeholder="Playtime" /> */}
+                            {/* <FormGroup check inline>
+                                <Label>
+                                    Playing at : 
+                                </Label>
+                            </FormGroup>
+                            <FormGroup check inline>
+                                <Label check>
+                                    <Input type="radio" />09:00
+                                </Label>
+                            </FormGroup>
+                            <FormGroup check inline>
+                                <Label check>
+                                    <Input type="radio" />14:00
+                                </Label>
+                            </FormGroup> */}
+                            <select required id = "playtimelist" ref="inputpt" className="form-control mb-2" placeholder="playtime">
+                                    <option value="" disabled selected hidden>Choose Playtime</option>
+                                    <option value="8">8:00</option>
+                                    <option value="9">9:00</option>
+                                    <option value="10">10:00</option>
+                                    <option value="11">11:00</option>
+                                    <option value="12">12:00</option>
+                                    <option value="13">13:00</option>
+                                    <option value="14">14:00</option>
+                                    <option value="15">15:00</option>
+                                    <option value="16">16:00</option>
+                                    <option value="17">17:00</option>
+                                    <option value="18">18:00</option>
+                                    <option value="19">19:00</option>
+                                    <option value="20">20:00</option>
+                                    <option value="21">21:00</option>
+                                    <option value="22">22:00</option>
+                                    <option value="23">23:00</option>
+                                    <option value="24">24:00</option>
+                            </select>
+                            <input type="number" ref="inputduration"  className="form-control mb-2" placeholder="Duration"/>
+                            <textarea  ref="inputsynopsis"  className="form-control mb-2" placeholder="Synopsis"/>
+                            
                             <p id="warningbutton" style={{color : "red"}}> </p>
                         </ModalBody>
                         <ModalFooter>

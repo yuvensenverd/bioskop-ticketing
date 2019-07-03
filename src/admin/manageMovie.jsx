@@ -130,13 +130,36 @@ class manageMovie extends React.Component{
         var director = this.refs.inputdirector.value
         var genre = this.refs.inputgenre.value
         var image = this.refs.inputurl.value
-        var playingTime = this.refs.inputpt.value
+        var playingTime = []
         var duration = this.refs.inputduration.value
+        
+        // RADIO BUTTON
+
+        if(this.refs.radio1.refs.radio1Inner.checked === true){
+            playingTime.push(9)
+
+        }
+        if(this.refs.radio2.refs.radio2Inner.checked === true){
+            playingTime.push(14)
+        }
+        if(this.refs.radio3.refs.radio3Inner.checked === true){
+            playingTime.push(17)
+        }
+        if(this.refs.radio4.refs.radio4Inner.checked === true){
+            playingTime.push(20)
+        }
+        if(this.refs.radio5.refs.radio5Inner.checked === true){
+            playingTime.push(22)
+        }
+
+        alert(playingTime)
+
+        // END RADIO BUTTON 
         
         var synopsis = this.refs.inputsynopsis.value
         if(title.replace(/\s/g, "") === "" || director.replace(/\s/g, "") === ""
          || genre.replace(/\s/g, "") === "" || image.replace(/\s/g, "") === ""
-         || playingTime.replace(/\s/g, "") === "" || duration.replace(/\s/g, "") === "" || synopsis.replace(/\s/g, "") === "")
+         || playingTime.length === 0 || duration.replace(/\s/g, "") === "" || synopsis.replace(/\s/g, "") === "")
          
          {
            // warning text
@@ -218,23 +241,40 @@ class manageMovie extends React.Component{
                             </select>
                             <input type="text" ref="inputurl"  className="form-control mb-2" placeholder="Image Url"/>
                             {/* <input type="number" ref="inputpt" min="1" max="24" className="form-control mb-2" placeholder="Playtime" /> */}
-                            {/* <FormGroup check inline>
+                            <div>
+                            <FormGroup check inline>
                                 <Label>
                                     Playing at : 
                                 </Label>
                             </FormGroup>
                             <FormGroup check inline>
                                 <Label check>
-                                    <Input type="radio" />09:00
+                                    <Input type="radio" value="9" ref="radio1" innerRef="radio1Inner"/>09:00
                                 </Label>
                             </FormGroup>
                             <FormGroup check inline>
                                 <Label check>
-                                    <Input type="radio" />14:00
+                                    <Input type="radio" value="14" ref="radio2" innerRef="radio2Inner"/>14:00
                                 </Label>
-                            </FormGroup> */}
-                            <select required id = "playtimelist" ref="inputpt" className="form-control mb-2" placeholder="playtime">
-                                    <option value="" disabled selected hidden>Choose Playtime</option>
+                            </FormGroup>
+                            <FormGroup check inline>
+                                <Label check>
+                                    <Input type="radio" value="17" ref="radio3" innerRef="radio3Inner"/>17:00
+                                </Label>
+                            </FormGroup>
+                            <FormGroup check inline>
+                                <Label check>
+                                    <Input type="radio" value="20" ref="radio4" innerRef="radio4Inner"/>20:00
+                                </Label>
+                            </FormGroup>
+                            <FormGroup check inline>
+                                <Label check>
+                                    <Input type="radio" value="22" ref="radio5" innerRef="radio5Inner" />22:00
+                                </Label>
+                            </FormGroup>
+                            </div>
+                            {/* <select required id = "playtimelist" ref="inputpt" className="form-control mb-2" placeholder="playtime" multiple size="1">
+                                    <option value="" disabled selected hidden>Choose Playtime (Hold Ctrl+Click for Multiple Opt)</option>
                                     <option value="8">8:00</option>
                                     <option value="9">9:00</option>
                                     <option value="10">10:00</option>
@@ -252,7 +292,7 @@ class manageMovie extends React.Component{
                                     <option value="22">22:00</option>
                                     <option value="23">23:00</option>
                                     <option value="24">24:00</option>
-                            </select>
+                            </select> */}
                             <input type="number" ref="inputduration"  className="form-control mb-2" placeholder="Duration"/>
                             <textarea  ref="inputsynopsis"  className="form-control mb-2" placeholder="Synopsis"/>
                             

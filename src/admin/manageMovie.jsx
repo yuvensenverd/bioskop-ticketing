@@ -23,6 +23,8 @@ class manageMovie extends React.Component{
         data : [],
         modalOpen : false,
         genreList : [],
+        showSynopsis : false,
+        currentSynopsis : null,
     }
     componentDidMount(){
         this.getDataMovies()
@@ -34,7 +36,7 @@ class manageMovie extends React.Component{
             this.setState({
                 data : result.data 
             })
-            
+           
         })
         .catch((error) => {
             console.log(error)
@@ -49,6 +51,7 @@ class manageMovie extends React.Component{
         return synarr.join(" ")
         
     }
+    
     printMovieData = () => {
 
         //PRINT GENRE LIST 
@@ -57,7 +60,7 @@ class manageMovie extends React.Component{
                 this.state.genreList.push(val.genre)
             }
         })
-        console.log(this.state.genreList)
+        console.log(this.state)
         
 
         var output = this.state.data.map((val,index) => {
@@ -70,7 +73,27 @@ class manageMovie extends React.Component{
                     <TableCell>{val.director}</TableCell>
                     <TableCell>{val.playingTime.join(",")}</TableCell>
                     <TableCell>{val.duration} Minutes</TableCell>
-                    <TableCell>{this.synopsisPrint(val.synopsis)}...</TableCell>
+                    <TableCell> {
+                    this.state.showSynopsis == false ? 
+                    <div>
+                    {this.synopsisPrint(val.synopsis)}
+                    <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
+                    </div>
+                    :
+                    this.state.showSynopsis == true && ((this.state.currentSynopsis == val.id) == false) ?
+                    <div>
+                    {this.synopsisPrint(val.synopsis)}
+                    <p class="font-weight-bold readmore"  onClick={() => this.setState({showSynopsis : true, currentSynopsis : val.id})}>...Read More</p>
+                    </div>
+                    :
+                    this.state.showSynopsis == true &&  ((this.state.currentSynopsis == val.id) == true) ?
+                    <div>
+                    {this.fullSynopsisPrint()}
+                    </div>
+                    :
+                    null
+                    }
+                    </TableCell>
                     <TableCell>
                         <div><input type="button" value="edit" className="btn btn-block btn-primary btn-sm"></input>
                         <input type="button" value="delete" className="btn btn-block btn-danger btn-sm"></input></div>
@@ -84,6 +107,16 @@ class manageMovie extends React.Component{
         this.setState({
             modalOpen : false
         })
+        console.log(this.state)
+       
+    }
+    fullSynopsisPrint = () => {
+        var id = this.state.currentSynopsis -1
+        return(
+            <p>{this.state.data[id].synopsis}</p>
+        )
+        
+        
     }
     validateForm = () => {
         var title = this.refs.inputtitle.value

@@ -4,7 +4,8 @@ class moviedetail extends React.Component{
     render(){
         return(
             <div>
-            <h1>{this.props.location.data}</h1>
+            {/* TO GET THE DATA PASS FROM THE LINK IN MOVIEDETAIL , THIS.PROPS.LOCATION.{VAR NAME} */}
+            <h1>{this.props.location.data} </h1>
             </div>
         )
     }

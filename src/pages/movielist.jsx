@@ -41,6 +41,13 @@ class movielist extends React.Component{
                         <div className="mb-2" style={{fontWeight : "bolder", fontFamily : "sans-serif", fontSize : "16px"}}> {val.title} </div>
                         <div className="mb-1" style={{fontSize : "11px", fontWeight : "bold"}}> English </div>
                         <p> <input type="button" className="buttongenre" value={val.genre}/></p>
+                        {/*
+                        FORMAT 
+                        <Link to={{
+                        pathname: '/yourPage',
+                        state: [{id: 1, name: 'Ford', color: 'red'}]
+                        }}> Your Page </Link> 
+                         */}
                         <Link to={{pathname : "/moviedetail", data : val.id}}>
                         <p>
                             <input type="button" className="btn btn-danger btn-block" value="SHOWTIMES" onClick={() => this.setCurrentMovie(val.id)} />

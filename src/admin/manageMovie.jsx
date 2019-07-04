@@ -318,11 +318,15 @@ class manageMovie extends React.Component{
             director : director,
             image : image
         }
-        console.log("masuk")
+        var confirm = window.confirm("Apakah anda yakin untuk mengedit data ? ")
+        if(confirm){
+            Axios.put('http://localhost:2000/movies/' + this.state.selectedEdit, data)
+            .then((res) => {
+            console.log("INI RES DATA " , res.data)
+            var data = this.state.data
+            data[this.state.selectedEdit-1] = res.data
+            // console.log("total data after update", data)
 
-        Axios.put('http://localhost:2000/movies/' + this.state.selectedEdit, data)
-        .then((res) => {
-            console.log(res.data)
 
             // GAK JALAN
             // var editeddata = {
@@ -338,14 +342,21 @@ class manageMovie extends React.Component{
 
             window.alert("Data sudah berhasil untuk diedit ")
             this.setState({
-                // data : this.state.data,
+                data : this.state.data,
                 selectedEdit : 0
             })
+            
         })
         .catch((err)=>{
             console.log(err)
             
         })
+        }
+        else{
+            
+        }
+
+        
     }
 
     render(){

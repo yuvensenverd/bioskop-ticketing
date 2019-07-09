@@ -9,13 +9,17 @@ const INITIAL_STATE = {
 var CountReducer = (state = INITIAL_STATE, action) =>{
     if(action.type === 'USER'){
         var userid = action.payload.username
+        localStorage.setItem('username', userid)
         return{...state, IS_LOGGED_IN : true, IS_ADMIN : false, currentUser : userid}
     }
     else if(action.type === 'ADMIN'){
         var userid = action.payload.username
+        localStorage.setItem('username', userid)
         return{...state, IS_LOGGED_IN : true, IS_ADMIN : true, currentUser : userid}
     }
     else if(action.type === "LOGOUT"){
+        // localStorage.clear()
+        localStorage.removeItem("username")
         return{...state, IS_LOGGED_IN : false, IS_ADMIN : false}
     }
     else {

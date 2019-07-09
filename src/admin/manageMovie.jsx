@@ -11,6 +11,7 @@ import Axios from 'axios'
 import {EditAttributesRounded, DeleteForeverRounded} from '@material-ui/core' 
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {connect} from 'react-redux'
 
 
 // MATERIAL UI (Google) >> REACT HOOKS
@@ -80,6 +81,7 @@ class manageMovie extends React.Component{
                     <TableCell><input type="text" ref="inputtitle" className="form-control" defaultValue={val.title}/></TableCell>
                     <TableCell><input type="text" ref="inputgenre" className="form-control" defaultValue={val.genre}/></TableCell>
                     <TableCell><input type="text" ref="inputimage" className="form-control" defaultValue={val.image}/></TableCell>
+                    <TableCell><input type="text" ref="inputbannerimg" className="form-control" defaultValue={val.bannerimg}/></TableCell>
                     <TableCell><input type="text" ref="inputdirector" className="form-control"  defaultValue={val.director}/></TableCell>
                     <TableCell><input type="text" ref="inputpt" className="form-control"  defaultValue={val.playingTime.join(",")}/></TableCell>
                     <TableCell><input type="text" ref="inputdur" className="form-control"  defaultValue={val.duration}/></TableCell>
@@ -97,6 +99,7 @@ class manageMovie extends React.Component{
                         <TableCell>{val.title}</TableCell>
                         <TableCell>{val.genre}</TableCell>
                         <TableCell><img src={val.image} height="50px" alt=""></img></TableCell>
+                        <TableCell><img src={val.bannerimg} height="50px" alt=""></img></TableCell>
                         <TableCell>{val.director}</TableCell>
                         <TableCell>{val.playingTime.join(",")}</TableCell>
                         <TableCell>{val.duration} Minutes</TableCell>
@@ -155,6 +158,8 @@ class manageMovie extends React.Component{
         var image = this.refs.inputurl.value
         var playingTime = []
         var duration = this.refs.inputduration.value
+        var bannerimg = this.refs.inputbannerimg.value
+        var video = this.refs.inputvideo.value
         
         // RADIO BUTTON
 
@@ -190,7 +195,7 @@ class manageMovie extends React.Component{
         var synopsis = this.refs.inputsynopsis.value
         if(title.replace(/\s/g, "") === "" || director.replace(/\s/g, "") === ""
          || genre.replace(/\s/g, "") === "" || image.replace(/\s/g, "") === ""
-         || playingTime.length === 0 || duration.replace(/\s/g, "") === "" || synopsis.replace(/\s/g, "") === "")
+         || playingTime.length === 0 || duration.replace(/\s/g, "") === "" || synopsis.replace(/\s/g, "") === "" || video.replace(/\s/g, "")=== "")
          
          {
            // warning text
@@ -199,7 +204,7 @@ class manageMovie extends React.Component{
        
         // URL VALIDATION
         var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/; // Dari internet
-        if(!regex .test(image)) {
+        if(!regex.test(image) || !regex.test(bannerimg)) {
             return document.getElementById("warningbutton").innerHTML = "url tidak valid!  "
         } else {
             
@@ -213,6 +218,8 @@ class manageMovie extends React.Component{
             playingTime : playingTime,
             director : director,
             image : image,
+            bannerimg : bannerimg,
+            video : video,
 
             
             
@@ -299,6 +306,9 @@ class manageMovie extends React.Component{
         var playingTime = this.refs.inputpt.value.split(',')
         var duration = this.refs.inputdur.value
         var synopsis = this.refs.inputsynopsis.value
+        var bannerimg = this.refs.inputbannerimg.value
+        var video = this.state.data[this.state.selectedEdit-1].video 
+      
        
 
         if(title.replace(/\s/g, "") === "" || director.replace(/\s/g, "") === ""
@@ -316,7 +326,9 @@ class manageMovie extends React.Component{
             synopsis : synopsis,
             playingTime : playingTime,
             director : director,
-            image : image
+            image : image,
+            bannerimg : bannerimg,
+            video : video
         }
         var confirm = window.confirm("Apakah anda yakin untuk mengedit data ? ")
         if(confirm){
@@ -360,11 +372,17 @@ class manageMovie extends React.Component{
     }
 
     render(){
+        if(this.props.IS_ADMIN === false){
+            return(
+                <h1 className="pt-5"> You do not have permission to modify movie data</h1>
+            )
+        }
+
         return(
-            <div class="adminbackcolor">
+            <div class="mycontainer">
                 
                 <Container fixed>
-                    <h1 className="mt-3"><center>Manage Movie Page</center></h1>
+                    <h1 className="pt-5 filtercss"><center>Manage Movie Page</center></h1>
                     <input type="button" value="Add Data" className="btn btn-success mb-2 mt-2" onClick={() => this.setState({modalOpen : true})}></input>
                     {/*MODAL START */}
                     <Modal isOpen={this.state.modalOpen} toggle={this.closeModal}>
@@ -433,6 +451,8 @@ class manageMovie extends React.Component{
                                     <option value="24">24:00</option>
                             </select> */}
                             <input type="number" ref="inputduration"  className="form-control mb-2" placeholder="Duration"/>
+                            <input type="text" ref="inputbannerimg"  className="form-control mb-2" placeholder="Link Banner Image"/>
+                            <input type="text" ref="inputvideo"  className="form-control mb-2" placeholder="Video Embed Link"/>
                             <textarea  ref="inputsynopsis"  className="form-control mb-2" placeholder="Synopsis"/>
                             
                             <p id="warningbutton" style={{color : "red"}}> </p>
@@ -450,6 +470,7 @@ class manageMovie extends React.Component{
                                 <TableCell>Title</TableCell>
                                 <TableCell>Genre</TableCell>
                                 <TableCell>Image</TableCell>
+                                <TableCell>Banner Image</TableCell>
                                 <TableCell>Director</TableCell>
                                 <TableCell>Playtime</TableCell>
                                 <TableCell>Duration</TableCell>
@@ -478,5 +499,13 @@ class manageMovie extends React.Component{
         )
     }
 }
+const mapStateToProps = (state) => {
+    return{
+       currentUser : state.CURRENT_USER_DATA.currentUser,
+       IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
+       IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN
+       
+    }
+}
 
-export default manageMovie;
+export default connect(mapStateToProps)(manageMovie)

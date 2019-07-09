@@ -43,9 +43,9 @@ class Header extends React.Component {
   render() {
     return (
       <div>
-        <Navbar color="dark"  expand="md">
+        <Navbar  className="navbarheader" expand="md" style={{height: "45px"}} >
         <Link to='/' className="headername">
-          <NavbarBrand  className="headername">Home</NavbarBrand>
+          <NavbarBrand  className="headername" style={{color : "#ff4422", fontSize : "20px", fontWeight : "bolder"}}>Home</NavbarBrand>
         </Link>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
@@ -66,7 +66,7 @@ class Header extends React.Component {
                 }
                 </DropdownToggle>
                 {/*  */}
-                <DropdownMenu right>
+                <DropdownMenu style={{backgroundColor : "lightgrey"}} right>
                   <DropdownItem>
                 {this.props.currentUser !== "" && this.props.IS_LOGGED_IN === true
                 ?
@@ -114,11 +114,19 @@ class Header extends React.Component {
                 
             {/* UNTUK MENGHILANGKAN LOGIN LINK */}
             {this.props.IS_LOGGED_IN === false ? 
-            <NavItem >
+            <div className="row headername">
+            <NavItem className="pl-3">
             <Link to='/pages/loginPage'>
-            <NavLink className="headername" style={{color : "white"}}>Login</NavLink>
+            <NavLink className="headername"  style={{color : "white", fontWeight : "bolder"}}>LOGIN</NavLink>
             </Link>
             </NavItem>
+            <NavItem className="pl-3">
+            <Link to='/pages/register'>
+            <NavLink className="headername" style={{color : "white", fontWeight : "bolder"}}>REGISTER</NavLink>
+            </Link>
+            </NavItem>
+            </div>
+            
             :
             this.props.IS_LOGGED_IN === true ?
             <div></div>

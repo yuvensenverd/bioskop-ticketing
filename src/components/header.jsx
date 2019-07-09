@@ -102,7 +102,7 @@ class Header extends React.Component {
               {this.props.IS_ADMIN === true ?
               <div className="headername mr-4 justify-content-center pt-2">
                 <Link to='/manage' className="headername mr-4">
-                    MANAGE
+                    MANAGE 
                 </Link>
               </div>
               :

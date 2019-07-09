@@ -33,7 +33,7 @@
 }
 
 body{
-  background-color: #f3f3f4;
+  background-color: #171717;
   
 }
 
@@ -149,9 +149,9 @@ body{
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #171717;
+
   background-size: auto 100%;
-  background-repeat: no-repeat;
+  /* background-repeat: no-repeat; */
   background-position: left top;
 
  

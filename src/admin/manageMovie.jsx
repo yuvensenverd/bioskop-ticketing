@@ -134,6 +134,7 @@ class manageMovie extends React.Component{
             }
            
         })
+        
         return output
     }
     closeModal = () => {
@@ -161,6 +162,7 @@ class manageMovie extends React.Component{
         var bannerimg = this.refs.inputbannerimg.value
         var video = this.refs.inputvideo.value
         
+        
         // RADIO BUTTON
 
         // if(this.refs.radio1.refs.radio1Inner.checked === true){
@@ -185,7 +187,6 @@ class manageMovie extends React.Component{
                 playingTime.push(listtime[i-1])
             }
         }
-        alert(playingTime)
 
 
        
@@ -317,7 +318,7 @@ class manageMovie extends React.Component{
          
          {
            // warning text
-            return window.alert("Form tidak boleh ada yang kosong")
+            return false
         }
         var data = {
             genre : genre,

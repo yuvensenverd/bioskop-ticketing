@@ -14,6 +14,7 @@ import Axios from 'axios';
 import { logUser, logAdmin } from './redux/actions/countActions'
 import { connect } from 'react-redux'
 import transaction from './pages/transaction'
+import { statement } from '@babel/template';
 
 
 class App extends React.Component{
@@ -36,7 +37,11 @@ class App extends React.Component{
     }
   }
   render(){
-
+    if(this.props.currentUser === "" && localStorage.getItem('username') != null){
+      return (
+        <p> Loading ... </p>
+      )
+    }
   return (
     <div>
       <Header></Header>
@@ -52,4 +57,13 @@ class App extends React.Component{
 }
 }
 
-export default connect(null, {logUser, logAdmin}) (App);
+const mapStateToProps = (state) => {
+  return{
+     currentUser : state.CURRENT_USER_DATA.currentUser,
+     IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
+     IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN
+     
+  }
+}
+
+export default connect(mapStateToProps, {logUser, logAdmin}) (App);

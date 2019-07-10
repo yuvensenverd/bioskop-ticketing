@@ -11,7 +11,8 @@ class HistoryTransaction extends React.Component{
     state = {
         userdata : [],
         movielist : [],
-        price : 35000
+        err : ""
+     
     }
     componentDidMount(){
         Axios.get('http://localhost:2000/users?username='+ this.props.currentUser)
@@ -20,6 +21,11 @@ class HistoryTransaction extends React.Component{
             this.setState({
                 userdata : history
             })
+            if(this.state.userdata.length === 0){
+                this.setState({
+                    err : "You have no transaction yet !"
+                })
+            }
             
         })
         .catch((err)=>{
@@ -51,17 +57,25 @@ class HistoryTransaction extends React.Component{
 
     printhistory = () =>{
         console.log(this.state.userdata)
-        var jsx = this.state.userdata.map((val,index)=> {
-            return(
-                <tr>
-                    <td>{index+1}</td>
-                    <td>{this.state.movielist[val.movId-1]}</td>
-                    <td>{val.ticket}</td>
-                    <td>{"Rp. " + numeral(this.state.price * val.ticket).format(0,0)}</td>
-                </tr>
-            )
-        })
-        return jsx
+        if(this.state.userdata.length !== 0){
+            
+            var jsx = this.state.userdata.map((val,index)=> {
+                return(
+                    <tr>
+                        <td>{index+1}</td>
+                        <td>{this.state.movielist[val.movId-1]}</td>
+                        <td>{val.ticket}</td>
+                        <td>{"Rp. " + numeral(val.totalprice).format(0,0)}</td>
+                    </tr>
+                )
+            })
+            return jsx
+        }else {
+            
+           
+                
+        }
+        
     }
 
 
@@ -71,8 +85,8 @@ class HistoryTransaction extends React.Component{
                    
             
             <div className="mycontainer">
-            
-               <Table dark className="mt-5">
+                <h1 className="text-light text-center mt-5"> Your Transaction History</h1>
+               <Table dark className="mt-3">
              
                    <thead>
                         <tr className="filtercss">
@@ -90,6 +104,17 @@ class HistoryTransaction extends React.Component{
                    
                    
                </Table>
+               {
+                            this.state.err === '' 
+                            ?
+                            <p></p>
+                            :
+                            this.state.err !== ''
+                            ?
+                            <div className='alert alert-black filtercss text-center'> {this.state.err} <span style={{fontWeight : "bolder", cursor : 'pointer', float : "right", height : "150px"}} onClick={()=>{this.setState({err : ""})}}> X</span></div>
+                            :
+                            null}
+                
                
                </div>
            

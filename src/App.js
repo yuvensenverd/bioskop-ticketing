@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'reactstrap';
 import './App.css';
 import Header from './components/header'
 import MovieList from './pages/movielist'
-import { Route , Link } from 'react-router-dom'
+import { Route , Link, Switch } from 'react-router-dom'
 import manageMovie from './admin/manageMovie';
 import moviedetail from './pages/moviedetail'
 import loginPage from './pages/loginPage';
@@ -16,6 +16,8 @@ import { connect } from 'react-redux'
 import transaction from './pages/transaction'
 import { statement } from '@babel/template';
 import historytransaction from './pages/historyTransaction'
+import PageNotFound from './pages/PageNotFound'
+
 
 
 class App extends React.Component{
@@ -46,6 +48,7 @@ class App extends React.Component{
   return (
     <div>
       <Header></Header>
+      <Switch>
       <Route path='/' exact component={MovieList}></Route>
       <Route path='/manage' component={manageMovie}></Route>
       <Route path='/moviedetail' component={moviedetail}></Route>
@@ -54,6 +57,9 @@ class App extends React.Component{
       <Route path='/pages/seatReservation' component={seatReservation}></Route>
       <Route path='/pages/transaction' component={transaction}></Route>
       <Route path='/history' component={historytransaction}></Route>
+      <Route path='*' component={PageNotFound}></Route>
+      </Switch>
+  
     </div>
   );
 }

@@ -3,7 +3,8 @@
 const INITIAL_STATE = { 
     currentUser : "",
     IS_LOGGED_IN : false,
-    IS_ADMIN : false
+    IS_ADMIN : false,
+  
 }
 
 var CountReducer = (state = INITIAL_STATE, action) =>{
@@ -20,7 +21,7 @@ var CountReducer = (state = INITIAL_STATE, action) =>{
     else if(action.type === "LOGOUT"){
         // localStorage.clear()
         localStorage.removeItem("username")
-        return{...state, IS_LOGGED_IN : false, IS_ADMIN : false}
+        return{...state, IS_LOGGED_IN : false, IS_ADMIN : false, currentuser : ""}
     }
     else {
         return state

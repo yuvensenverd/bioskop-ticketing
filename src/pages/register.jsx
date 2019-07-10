@@ -76,7 +76,9 @@ class Register extends React.Component{
             var userdata ={
                 role : "user",
                 username : username, 
-                password : password
+                password : password,
+                transaction : [],
+                saldo : 0
             }
             Axios.post('http://localhost:2000/users',userdata)
             .then((res)=>{

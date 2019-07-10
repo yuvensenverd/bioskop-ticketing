@@ -4,6 +4,7 @@ import { faCouch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import numeral from 'numeral'
 import Axios from 'axios';
+import PageNotFound from './../pages/PageNotFound'
 
 
 
@@ -15,42 +16,49 @@ class seatReservation extends React.Component{
         seatReserved : [],
         seatAvailable : [],
         currentMovie : [],
-        seatBooked : [] // ["A2", "B5"]
+        seatBooked : [], // ["A2", "B5"],
+        
     }
     componentDidMount = () => {
-        const moviename = this.props.location.state.movie
-        console.log(moviename)
-        Axios.get('http://localhost:2000/movies?title='+moviename)
-        .then((res) => {
-            var booked = res.data[0].booked
-            var moviename = res.data[0].title
-            this.setState({
-                seatBooked : booked,
-                currentMovie : moviename
-            })
-        })
-        .catch((err)=> {
-            console.log(err)
-        })
-    
-  
-        // PRINT SEAT ID , PUSH TO STATE SEATS & SEATSAVAILABLE
-        var alphabet = "ABCDEFGHIJ"
-        var index = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
-        for(var i = 0; i<alphabet.length; i++){
-            for(var y = 0; y<index.length; y++){
-                var arr = alphabet[i]+index[y]
-                this.state.seats.push(arr)
-                if(this.state.seatReserved.indexOf(arr) !== -1 || this.state.seatBooked.indexOf(arr) !== -1 ){
-               
 
-                }else {
-                    this.state.seatAvailable.push(arr)
-                }
-                
-            }
-        }
+        if(this.props.location.state !== undefined){
+            
+            const moviename = this.props.location.state.movie
+            console.log(moviename)
+            Axios.get('http://localhost:2000/movies?title='+moviename)
+            .then((res) => {
+                var booked = res.data[0].booked
+                var moviename = res.data[0].title
+                this.setState({
+                    seatBooked : booked,
+                    currentMovie : moviename
+                })
+            })
+            .catch((err)=> {
+                console.log(err)
+            })
         
+      
+            // PRINT SEAT ID , PUSH TO STATE SEATS & SEATSAVAILABLE
+            var alphabet = "ABCDEFGHIJ"
+            var index = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+            for(var i = 0; i<alphabet.length; i++){
+                for(var y = 0; y<index.length; y++){
+                    var arr = alphabet[i]+index[y]
+                    this.state.seats.push(arr)
+                    if(this.state.seatReserved.indexOf(arr) !== -1 || this.state.seatBooked.indexOf(arr) !== -1 ){
+                   
+    
+                    }else {
+                        this.state.seatAvailable.push(arr)
+                    }
+                    
+                }
+            }
+            
+        }else{
+            
+        }
         
     }
     
@@ -72,10 +80,7 @@ class seatReservation extends React.Component{
         }
     }
     // masih test
-    getMovie = () =>{
-        // GET CURRENT MOVIE FROM PREVIOUS PAGE
-        
-    }
+    
     //background
     //hour slot
     //
@@ -158,6 +163,14 @@ class seatReservation extends React.Component{
    
     
     render(){
+        console.log(this.props.location.state)
+        if(this.props.location.state === undefined){
+            console.log("Masuk")
+            return (
+                console.log("Masuk"),
+                <PageNotFound/>
+            )
+        }
         return(
             <div className="mycontainer">
                 <div className="container mt-5 pb-5">

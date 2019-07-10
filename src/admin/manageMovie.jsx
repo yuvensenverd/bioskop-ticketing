@@ -161,6 +161,7 @@ class manageMovie extends React.Component{
         var duration = this.refs.inputduration.value
         var bannerimg = this.refs.inputbannerimg.value
         var video = this.refs.inputvideo.value
+        var booked = []
         
         
         // RADIO BUTTON
@@ -221,6 +222,7 @@ class manageMovie extends React.Component{
             image : image,
             bannerimg : bannerimg,
             video : video,
+            booked : []
 
             
             
@@ -309,6 +311,7 @@ class manageMovie extends React.Component{
         var synopsis = this.refs.inputsynopsis.value
         var bannerimg = this.refs.inputbannerimg.value
         var video = this.state.data[this.state.selectedEdit-1].video 
+        var booked = []
       
        
 
@@ -329,7 +332,8 @@ class manageMovie extends React.Component{
             director : director,
             image : image,
             bannerimg : bannerimg,
-            video : video
+            video : video,
+            booked : booked
         }
         var confirm = window.confirm("Apakah anda yakin untuk mengedit data ? ")
         if(confirm){

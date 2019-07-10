@@ -38,6 +38,14 @@ class Transaction extends React.Component{
     }
 
     onCheckOut = () => {
+        //post ke movie
+        // var booked = this.props.location.state.booked (dari data)
+        // booked.push([])
+        // Axion.patch('http://localhost:2000/movies'+this.props.location.state.id, {booked : booked})
+        //.then((res)=>{})
+        //.catch((err)=>{})
+        // console.log([...arr1, ...arr2]) arr1 + arr2 
+   
         
         Axios.get('http://localhost:2000/movies?title='+this.state.moviename)
         .then((res)=> {
@@ -58,6 +66,7 @@ class Transaction extends React.Component{
                     var transaction = {
                         movId : res.data[0].id ,
                         ticket : this.state.seat.length,
+                        totalprice : this.state.seat.length * this.state.price
                     }
                     var restransaction = rez.data[0].transaction
                     restransaction.push(transaction)

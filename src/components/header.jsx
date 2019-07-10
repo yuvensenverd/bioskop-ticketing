@@ -48,9 +48,10 @@ class Header extends React.Component {
           <NavbarBrand  className="headername" style={{color : "#ff4422", fontSize : "20px", fontWeight : "bolder"}}>Home</NavbarBrand>
         </Link>
           <NavbarToggler onClick={this.toggle} />
+          
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto " navbar>
-
+            
             {/*  DROPDOWN UNTUK STATE LOGGIN FALSE & LOGGIN TRUE */}
             <UncontrolledDropdown className="headername mr-4" nav inNavbar>
                 <DropdownToggle className="headername" nav caret>
@@ -133,7 +134,17 @@ class Header extends React.Component {
             :
             null
               }
-              
+
+            {this.props.IS_LOGGED_IN === true ? 
+            <div className="headername  justify-content-center pt-2">
+            <Link to={'/history'} className="headername mr-4">
+                History
+            </Link>
+            </div>
+            :
+            null
+            }
+            
             </Nav>
           </Collapse>
         </Navbar>

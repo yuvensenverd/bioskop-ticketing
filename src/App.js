@@ -15,6 +15,7 @@ import { logUser, logAdmin } from './redux/actions/countActions'
 import { connect } from 'react-redux'
 import transaction from './pages/transaction'
 import { statement } from '@babel/template';
+import historytransaction from './pages/historyTransaction'
 
 
 class App extends React.Component{
@@ -52,6 +53,7 @@ class App extends React.Component{
       <Route path='/pages/register' component={register}></Route>
       <Route path='/pages/seatReservation' component={seatReservation}></Route>
       <Route path='/pages/transaction' component={transaction}></Route>
+      <Route path='/history' component={historytransaction}></Route>
     </div>
   );
 }

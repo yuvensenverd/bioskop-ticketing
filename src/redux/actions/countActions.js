@@ -1,6 +1,5 @@
 import Axios from 'axios'
 
-
 export const logUser = (id, saldo) =>{
     return {
         type : "USER",
@@ -30,6 +29,7 @@ export const Transaksi = (number)=> {
 }
 
 export const updateCart = (len)=>{
+   
     return{
         type: "UPDATE",
         payload : len

@@ -78,12 +78,13 @@ class Register extends React.Component{
                 username : username, 
                 password : password,
                 transaction : [],
-                saldo : 0
+                saldo : 0,
+                cart : []
             }
             Axios.post('http://localhost:2000/users',userdata)
             .then((res)=>{
                 window.alert("Your account has been registered successfully")
-                this.props.logUser(username)
+                this.props.logUser(username, userdata.saldo)
                 this.setState({
                     redirect : true,
                     isLoading : false

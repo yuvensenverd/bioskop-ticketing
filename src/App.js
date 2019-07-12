@@ -11,26 +11,35 @@ import register from './pages/register'
 import seatReservation from './pages/seatReservation'
 import { Url } from './support/url'
 import Axios from 'axios';
-import { logUser, logAdmin } from './redux/actions/countActions'
+import { logUser, logAdmin, updateCart } from './redux/actions/countActions'
 import { connect } from 'react-redux'
 import transaction from './pages/transaction'
 import { statement } from '@babel/template';
 import historytransaction from './pages/historyTransaction'
 import PageNotFound from './pages/PageNotFound'
+import UserSetting from './pages/usersetting'
+
 
 
 
 class App extends React.Component{
   componentDidMount(){
-    
+  
+    var cartlen = localStorage.getItem('cartuser')
+    console.log("cartlen ", cartlen)
     var username = localStorage.getItem('username')
     if(username !== null){
       Axios.get(Url + '/users?username=' + username)
       .then((res)=> {
         if(res.data[0].role === "user"){
           this.props.logUser(res.data[0].username, res.data[0].saldo)
+          this.props.updateCart(cartlen)
         }else if(res.data[0].role === "admin"){
+  
           this.props.logAdmin(res.data[0].username, res.data[0].saldo)
+   
+          this.props.updateCart(cartlen)
+   
         }
       })
       .catch((err) =>{
@@ -57,6 +66,7 @@ class App extends React.Component{
       <Route path='/pages/seatReservation' component={seatReservation}></Route>
       <Route path='/pages/transaction' component={transaction}></Route>
       <Route path='/history' component={historytransaction}></Route>
+      <Route path='/usersetting' component={UserSetting}></Route>
       <Route path='*' component={PageNotFound}></Route>
       </Switch>
   
@@ -74,4 +84,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, {logUser, logAdmin}) (App);
+export default connect(mapStateToProps, {logUser, logAdmin, updateCart}) (App);

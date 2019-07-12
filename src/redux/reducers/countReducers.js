@@ -62,6 +62,8 @@ var CountReducer = (state = INITIAL_STATE, action) =>{
     else if(action.type === "LOGOUT"){
         // localStorage.clear()
         localStorage.removeItem("username")
+        
+        localStorage.setItem('cartuser', 0)
         return INITIAL_STATE
     }
     else if(action.type === "TRANSAKSI"){
@@ -69,6 +71,7 @@ var CountReducer = (state = INITIAL_STATE, action) =>{
         return{...state, saldo : state.saldo+transaksi}
     }
     else if(action.type === "UPDATE"){
+        localStorage.setItem('cartuser', action.payload)
         return{...state, cartlength : action.payload}
     }
     else {

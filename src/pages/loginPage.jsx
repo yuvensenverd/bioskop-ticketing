@@ -4,14 +4,19 @@ import Axios from 'axios'
 import { connect } from 'react-redux'
 import { logUser } from './../redux/actions/countActions'
 import { logAdmin } from './../redux/actions/countActions'
+import { updateCart } from './../redux/actions/countActions'
 import { Redirect } from 'react-router'
 import { Paper } from '@material-ui/core'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom'
  
 class loginPage extends React.Component{
     state = {
         userdata : [],
-        redirect : false
+        redirect : false,
+        cart : 0,
+        modalOpen : false,
+        errormsg : ''
     }
     componentDidMount(){
         // this.getLoginData()
@@ -49,25 +54,32 @@ class loginPage extends React.Component{
         var userpass = this.refs.userPassLog.value
       
         if(userid.replace(/\s/g, "") === "" || userpass.replace(/\s/g, "") === ""){
-            window.alert("Semua form harus diisi")
+            this.setState({
+                modalOpen : true,
+                errormsg : "Semua Form Harus Diisi!"
+            })
         }else{
             Axios.get('http://localhost:2000' + '/users?username=' + userid + '&password=' + userpass)
             .then((res)=> {
                 if(res.data.length === 0){
                     console.log("not valid")
-                    return window.alert("username / password is not valid")
+                    
+                    return this.setState({
+                        modalOpen : true,
+                        errormsg : "Password / Username is not Valid!"
+                    })
                 }else {
                     this.setState({
                         redirect : true // SUPAYA PINDAH PAGE
                     })
                    
                     if(res.data[0].role === "user"){
-                        console.log(res.data[0].saldo)
-                        return this.props.logUser(userid, res.data[0].saldo)
+                     
+                        this.props.logUser(userid, res.data[0].saldo)
+                        return this.props.updateCart(res.data[0].cart.length)
                     }else if(res.data[0].role === "admin"){
-
-                        console.log(res.data[0].saldo)
-                        return this.props.logAdmin(userid,res.data[0].saldo)
+                        this.props.logAdmin(userid,res.data[0].saldo)
+                        return this.props.updateCart(res.data[0].cart.length)
                     }
                 }
             })
@@ -110,14 +122,26 @@ class loginPage extends React.Component{
         
         const { redirect } = this.state
         if(redirect) {
+            // this.props.updateCart(this.state.cart)
            return <Redirect to="/" push={true} />
         }
         if(this.props.IS_LOGGED_IN === true){
+            // this.props.updateCart(this.state.cart)
             return <Redirect to="/"/>
         }
         return (
             
+            
             <div className="mycontainer">
+                <Modal isOpen={this.state.modalOpen} size="lg" style={{maxWidth: '700px', width: '80%'}} toggle={()=> this.setState({modalOpen : false})}>
+                        <ModalHeader>
+                            Error Message !
+                        </ModalHeader>
+                        <ModalBody>
+                            <h1>{this.state.errormsg}</h1>
+                        </ModalBody>
+            
+                </Modal>
                 
                 <div className='row justify-content-center mt-5'>
                     <div className="col-md-8">
@@ -145,11 +169,12 @@ const mapStateToProps = (state) => {
        currentUser : state.CURRENT_USER_DATA.currentUser,
        IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
        IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN,
-       saldouser : state.CURRENT_USER_DATA.saldo
+       saldouser : state.CURRENT_USER_DATA.saldo,
+       cartlength : state.CURRENT_USER_DATA.cartlength
        
     }
 }
  
 // localhost:2000/users?username=enverd&&password=456456
 
-export default connect(mapStateToProps, {logUser, logAdmin})(loginPage);
+export default connect(mapStateToProps, {logUser, logAdmin, updateCart})(loginPage);

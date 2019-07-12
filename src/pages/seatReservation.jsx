@@ -22,7 +22,8 @@ class seatReservation extends React.Component{
         currentMovie : "",
         seatBooked : [], // ["A2", "B5"],
         price : 35000,
-        finishUpdate : false
+        finishUpdate : false,
+        currentDate : ""
 
         
     }
@@ -36,10 +37,15 @@ class seatReservation extends React.Component{
             .then((res) => {
                 var booked = res.data[0].booked
                 var moviename = res.data[0].title
+                var today = new Date()
+                var date = today.getDate()+ '/'+(today.getMonth() + 1) + '/' + today.getFullYear()  
+         
                 this.setState({
                     seatBooked : booked,
-                    currentMovie : moviename
+                    currentMovie : moviename,
+                    currentDate : date
                 })
+                console.log(this.state.currentDate)
             })
             .catch((err)=> {
                 console.log(err)
@@ -173,8 +179,8 @@ class seatReservation extends React.Component{
         .then((res)=>{
             var sama = false
             var cartuser = res.data[0].cart
-      
             var arr = {
+                date : this.state.currentDate,
                 movtitle : this.state.currentMovie,
                 seat : this.state.seatReserved,
                 totalprice : this.state.price * this.state.seatReserved.length
@@ -183,11 +189,11 @@ class seatReservation extends React.Component{
         
             res.data[0].cart.map((val, index)=>{
                 if(arr.movtitle === val.movtitle){
-                    console.log("Masuk Sama ")
+                    // KALAU ADA MOVIE YANG TITLENYA SAMA DENGAN CART USER 
                     cartuser[index].totalprice = cartuser[index].totalprice + arr.totalprice
-                    console.log(cartuser[index].totalprice)
+          
                     cartuser[index].seat = [...cartuser[index].seat, ...arr.seat]
-                    console.log(cartuser[index].seat)
+        
                     sama = true
                     
                 }

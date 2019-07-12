@@ -60,6 +60,7 @@ class Transaction extends React.Component{
                 cart : res.data[0].cart
             })
             this.props.updateCart(res.data[0].cart.length)
+            console.log(this.state.cart)
         })
         .catch((err)=>{
             console.log(err)
@@ -79,6 +80,7 @@ class Transaction extends React.Component{
                     <td>{value.movtitle}</td>
                     <td>{value.seat.join(",  ") + "  (Total "+ value.seat.length+ "  Ticket)"}</td>
                     <td>{"Rp " + numeral(value.totalprice).format(0,0)}</td>
+                    <td><input type="button" value="CANCEL" className="btn  btn-danger btn-sm filtercss" onClick={()=>this.buttonDeleteClick(index)}></input></td>
                 </tr>
             
             
@@ -124,6 +126,60 @@ class Transaction extends React.Component{
         
     }
 
+    buttonDeleteClick = (index) =>{
+
+        var confirm = window.confirm("Yakin untuk mendelete data di cart ?")
+
+        if(confirm){
+            Axios.get('http://localhost:2000/movies?title='+this.state.cart[index].movtitle)
+            .then((res)=>{
+            console.log("Berhasil get movie")
+            console.log(res.data)
+            var databook = res.data[0].booked
+            for(var i = 0; i<this.state.cart[index].seat.length; i++){
+                if(databook.indexOf(this.state.cart[index].seat[i]) !== -1){
+                    var location = databook.indexOf(this.state.cart[index].seat[i])
+                    databook.splice(location, 1)
+                }   
+            }
+            
+
+            // databook.filter((val)=>{return this.state.cart[index].seat.indexOf(val) === -1})
+            console.log(databook)
+            Axios.patch('http://localhost:2000/movies/'+res.data[0].id, {booked : databook})
+            .then((res2)=>{
+                var newcart = this.state.cart
+                newcart.splice(index,1)
+                this.setState({
+                    cart : newcart
+                })
+      
+                Axios.get('http://localhost:2000/users?username='+this.props.currentUser)
+                .then((res3)=>{
+                    var userdatacart = this.state.cart
+                    Axios.patch('http://localhost:2000/users/'+res3.data[0].id, {cart : userdatacart})
+                    .then((res4)=>{
+                        this.props.updateCart(res4.data.cart.length)
+                        window.alert("Berhasil Update Cart User")
+                    })
+
+                })
+                .catch((err)=>{
+                    console.log(err)
+                })
+            })
+        })
+        .catch((err)=>{
+
+        })
+
+        }
+        
+
+        
+        
+    }
+
     mapTotal = () =>{
         var total = 0
         this.state.cart.map((val)=> {
@@ -146,9 +202,15 @@ class Transaction extends React.Component{
    
         Axios.get('http://localhost:2000/users?username='+this.props.currentUser)
         .then((res)=>{
-            var usercart = res.data[0].cart
-            var cTransaction = res.data[0].transaction
-            var transaction = [...cTransaction, ...usercart]
+            // var usercart = res.data[0].cart
+      
+            var usercart = this.state.cart // ada tanggal, movie, seat , dan harga (array of object)
+            var transaction = res.data[0].transaction
+            transaction.push(usercart)
+       
+           
+         
+        
             Axios.patch('http://localhost:2000/users/'+res.data[0].id, {transaction : transaction})
             .then((res2)=>{
                 var kosong = []
@@ -159,6 +221,7 @@ class Transaction extends React.Component{
                 .then((res3)=>{
 
                     this.props.updateCart(res3.data.cart.length) // Cart Length Kosong (Update di Redux)
+                    localStorage.removeItem("cartuser")
                     window.alert("Checkout Berhasil")
                     this.setState({
                         redirect : true
@@ -197,6 +260,7 @@ class Transaction extends React.Component{
                                 <td>Movie Name</td>
                                 <td>Seat Number</td>
                                 <td>Price</td>
+                                <td>Actions</td>
                             </tr>
                        </thead>
                        <tbody>

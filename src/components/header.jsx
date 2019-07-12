@@ -15,7 +15,7 @@ import numeral from 'numeral'
 
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { UserLogOut, Transaksi } from './../redux/actions/countActions'
+import { UserLogOut, Transaksi, updateCart } from './../redux/actions/countActions'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -45,6 +45,9 @@ class Header extends React.Component {
     // this.setState({
     //   statesaldo : this.props.saldouser
     // })
+  }
+  componentDidMount = () => {
+
   }
   toggle() {
     this.setState({
@@ -145,6 +148,13 @@ class Header extends React.Component {
                 <DropdownItem className="headername">
                   <Link to="/">
                     <p onClick={() => this.props.UserLogOut()}>Logout</p>
+                    
+                    {/* Function Here */}
+                  </Link>
+                </DropdownItem>
+                <DropdownItem className="headername">
+                  <Link to="/usersetting">
+                    <p >Change Password</p>
                     
                     {/* Function Here */}
                   </Link>
@@ -281,4 +291,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, { UserLogOut, Transaksi })(Header);
+export default connect(mapStateToProps, { UserLogOut, Transaksi, updateCart })(Header);

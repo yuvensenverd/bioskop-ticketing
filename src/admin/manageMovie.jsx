@@ -379,7 +379,7 @@ class manageMovie extends React.Component{
     render(){
         if(this.props.IS_ADMIN === false){
             return(
-                <h1 className="pt-5"> You do not have permission to modify movie data</h1>
+                <h1 className="pt-5 text-light"> You do not have permission to modify movie data</h1>
             )
         }
 

@@ -7,6 +7,8 @@ import Axios from 'axios';
 import PageNotFound from './../pages/PageNotFound'
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom'
+import { updateCart } from './../redux/actions/countActions'
+
 
 
 
@@ -169,13 +171,31 @@ class seatReservation extends React.Component{
     addToCart = () => {
         Axios.get('http://localhost:2000/users?username='+this.props.currentUser)
         .then((res)=>{
+            var sama = false
             var cartuser = res.data[0].cart
+      
             var arr = {
                 movtitle : this.state.currentMovie,
                 seat : this.state.seatReserved,
                 totalprice : this.state.price * this.state.seatReserved.length
             }
-            cartuser.push(arr)
+         
+        
+            res.data[0].cart.map((val, index)=>{
+                if(arr.movtitle === val.movtitle){
+                    console.log("Masuk Sama ")
+                    cartuser[index].totalprice = cartuser[index].totalprice + arr.totalprice
+                    console.log(cartuser[index].totalprice)
+                    cartuser[index].seat = [...cartuser[index].seat, ...arr.seat]
+                    console.log(cartuser[index].seat)
+                    sama = true
+                    
+                }
+            })
+            if ( sama === false ){
+                cartuser.push(arr)
+            }
+            this.props.updateCart(cartuser.length)
             
             Axios.patch('http://localhost:2000/users/' + res.data[0].id, {cart : cartuser})
             .then((res)=>{
@@ -267,4 +287,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)( seatReservation);
+export default connect(mapStateToProps, {updateCart})( seatReservation);

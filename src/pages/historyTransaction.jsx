@@ -78,6 +78,14 @@ class HistoryTransaction extends React.Component{
         
     }
 
+    mapTotal = () =>{
+        var total = 0
+        this.state.userdata.map((val)=>{
+            total = total + val.totalprice
+        })
+        return total
+    }
+
 
     render(){
         return(
@@ -99,6 +107,12 @@ class HistoryTransaction extends React.Component{
                    <tbody>
                         
                         {this.printhistory()}
+                        <tr className="filtercss text-success"> 
+                                <td></td>
+                                <td></td>
+                                <td>Total Money Spent : </td>
+                                <td>{"Rp " + numeral(this.mapTotal()).format(0,0)}</td>
+                     </tr>
                         
                    </tbody>
                    

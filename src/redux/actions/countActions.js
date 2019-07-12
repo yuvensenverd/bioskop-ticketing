@@ -22,9 +22,16 @@ export const UserLogOut = () => {
 }
 
 export const Transaksi = (number)=> {
-    console.log(number)
+  
     return{
         type: "TRANSAKSI",
         payload : number
+    }
+}
+
+export const updateCart = (len)=>{
+    return{
+        type: "UPDATE",
+        payload : len
     }
 }

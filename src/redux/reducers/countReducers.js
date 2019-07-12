@@ -10,6 +10,7 @@ const INITIAL_STATE = {
     IS_LOGGED_IN : false,
     IS_ADMIN : false,
     saldo : 0,
+    cartlength : 0
 }
 
 
@@ -66,6 +67,9 @@ var CountReducer = (state = INITIAL_STATE, action) =>{
     else if(action.type === "TRANSAKSI"){
         var transaksi = action.payload
         return{...state, saldo : state.saldo+transaksi}
+    }
+    else if(action.type === "UPDATE"){
+        return{...state, cartlength : action.payload}
     }
     else {
         return state

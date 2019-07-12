@@ -4,7 +4,8 @@ import numeral from 'numeral'
 import Axios from 'axios';
 import {Redirect} from 'react-router'
 import {connect} from 'react-redux'
-import { Transaksi } from './../redux/actions/countActions'
+import { Transaksi, updateCart } from './../redux/actions/countActions'
+import {Link } from 'react-router-dom'
 
 
 
@@ -19,9 +20,7 @@ class Transaction extends React.Component{
        
     }
     componentDidMount(){
-        var listseat = this.props.location.state.seatnumber
-        var moviename = this.props.location.state.moviename
-        console.log(moviename)
+  
      
         // AXIOS get & patch tambah isi cart
        
@@ -60,6 +59,7 @@ class Transaction extends React.Component{
             this.setState({
                 cart : res.data[0].cart
             })
+            this.props.updateCart(res.data[0].cart.length)
         })
         .catch((err)=>{
             console.log(err)
@@ -67,67 +67,59 @@ class Transaction extends React.Component{
     
     }
     printCart = () => {
-        var arrhasil = []
-        this.state.cart.map((value, index) => {
-            if(index !== this.state.cart.length-1){
-          
-                if(this.state.cart[index].movtitle === this.state.cart[index+1].movtitle){
-                    arrhasil.push(index)
-                    var arr = [...this.state.cart[index].seat , ...this.state.cart[index+1].seat]
-                    
-                    // return(
-                    //     <tr>
-                    //         <td>{index+1}</td>
-                    //         <td>{this.state.cart[index].movtitle}</td>
-                    //         <td>{arr.join(",  ") + "  (Total "+ arr.length+ "  Ticket)"}</td>
-                    //         <td>{"Rp " + numeral(this.state.cart[index].totalprice + this.state.cart[index+1]).format(0,0)}</td>
-                    //     </tr>
-                    // )
-                }
-            }else{
-                // return(
-                // <tr>
-                //     <td>{index+1}</td>
-                //     <td>{value.movtitle}</td>
-                //     <td>{value.seat.join(",  ") + "  (Total "+ value.seat.length+ "  Ticket)"}</td>
-                //     <td>{"Rp " + numeral(value.totalprice).format(0,0)}</td>
-                // </tr>
-                // )
-            }
+        // Map cart, yang sama 
+        // Map di arr 
+      
+        var output = this.state.cart.map((value, index) => {
+        
+            
+            return(
+                <tr>
+                    <td>{index+1}</td>
+                    <td>{value.movtitle}</td>
+                    <td>{value.seat.join(",  ") + "  (Total "+ value.seat.length+ "  Ticket)"}</td>
+                    <td>{"Rp " + numeral(value.totalprice).format(0,0)}</td>
+                </tr>
+            
+            
             
            
-        })
-        console.log(arrhasil)
-
-        var output = ''
-        for(var i = 0; i<this.state.cart.length; i++){
-            var same = false
-            for(var y = 0; y<arrhasil.length; y++){
-                if(i === arrhasil[y]){
-                    same = true
-                    var arr = [...this.state.cart[i].seat , ...this.state.cart[i+1].seat]
-                    output = output + `
-                        <tr>
-                            <td>${i+1}</td>
-                            <td>${this.state.cart[i].movtitle}</td>
-                            <td>${arr.join(",  ") + "  (Total "+ arr.length+ "  Ticket)"}</td>
-                            <td>${"Rp " + numeral(this.state.cart[i].totalprice + this.state.cart[i+1]).format(0,0)}</td>
-                        </tr>
-                    `
-                }
-            }
-            if(same === false){
-                output = output + `
-                         <tr>
-                            <td>${i+1}</td>
-                            <td>${this.state.cart[i].movtitle}</td>
-                            <td>${this.state.cart[i].seat.join(",  ") + "  (Total "+ this.state.cart[i].seat.length+ "  Ticket)"}</td>
-                            <td>${"Rp " + numeral(this.state.cart[i].totalprice).format(0,0)}</td>
-                         </tr>
-                `
-            }
-        }
+        )
+        
+    }
+    )
         return output
+
+
+        // var output = ''
+        // for(var i = 0; i<this.state.cart.length; i++){
+        //     var same = false
+        //     for(var y = 0; y<arrhasil.length; y++){
+        //         if(i === arrhasil[y]){
+        //             same = true
+        //             var arr = [...this.state.cart[i].seat , ...this.state.cart[i+1].seat]
+        //             output = output + `
+        //                 <tr>
+        //                     <td>${i+1}</td>
+        //                     <td>${this.state.cart[i].movtitle}</td>
+        //                     <td>${arr.join(",  ") + "  (Total "+ arr.length+ "  Ticket)"}</td>
+        //                     <td>${"Rp " + numeral(this.state.cart[i].totalprice + this.state.cart[i+1]).format(0,0)}</td>
+        //                 </tr>
+        //             `
+        //         }
+        //     }
+        //     if(same === false){
+        //         output = output + `
+        //                  <tr>
+        //                     <td>${i+1}</td>
+        //                     <td>${this.state.cart[i].movtitle}</td>
+        //                     <td>${this.state.cart[i].seat.join(",  ") + "  (Total "+ this.state.cart[i].seat.length+ "  Ticket)"}</td>
+        //                     <td>${"Rp " + numeral(this.state.cart[i].totalprice).format(0,0)}</td>
+        //                  </tr>
+        //         `
+        //     }
+        // }
+        // return output
         
         
     }
@@ -160,12 +152,13 @@ class Transaction extends React.Component{
             Axios.patch('http://localhost:2000/users/'+res.data[0].id, {transaction : transaction})
             .then((res2)=>{
                 var kosong = []
-                this.props.Transaksi(-(this.mapTotal()))
+                
                 var saldofinal = this.props.saldouser - this.mapTotal()
+                this.props.Transaksi(-(this.mapTotal()))
                 Axios.patch('http://localhost:2000/users/'+res.data[0].id, {cart : kosong, saldo : saldofinal}) // hapus cart
                 .then((res3)=>{
 
-                    
+                    this.props.updateCart(res3.data.cart.length) // Cart Length Kosong (Update di Redux)
                     window.alert("Checkout Berhasil")
                     this.setState({
                         redirect : true
@@ -187,6 +180,11 @@ class Transaction extends React.Component{
             )
             
         }
+        if(this.props.IS_LOGGED_IN === false){
+            return(
+                <Redirect to='/pages/loginPage'></Redirect>
+            )
+        }
         return(
             
                 <div className="mycontainer">
@@ -203,25 +201,46 @@ class Transaction extends React.Component{
                        </thead>
                        <tbody>
                             {this.printCart()}
-                           
-                            <tr className="filtercss text-success"> 
+                           {this.state.cart.length !== 0 
+                           ? 
+                          
+                    
+                           <tr className="filtercss text-success"> 
                                 <td></td>
                                 <td></td>
                                 <td>Total Price : </td>
                                 <td>{"Rp " + numeral(this.mapTotal()).format(0,0)}</td>
                             </tr>
-                            <tr className="filtercss"> 
-                                <td></td>
-                                <td></td>
-                                <td>Saldo Anda </td>
-                                <td>{"Rp " + numeral(this.props.saldouser).format(0,0)}</td>
-                            </tr>
+                          
+                         
+                            :
+                            null
+                           }
+                            
                             
                        </tbody>
                        <tfoot></tfoot>
                        
                    </Table>
-                   <input type="button" className="form-control btn-lg btn btn-success filtercss" value="CHECKOUT" onClick={()=>this.onCheckOut()}></input>
+                    {this.state.cart.length === 0 
+                    ? 
+                    <div className='alert alert-secondary text-center'> YOUR CART IS STILL EMPTY <span style={{fontWeight : "bolder"}} > </span></div>
+                    :
+                    null
+                
+                }
+                {this.state.cart.length !== 0
+                ?
+                <div>
+                <Link to="/">
+                <input type="button" className="form-control btn-lg btn filtercss mt-3" value="BUY MORE TICKET" style={{backgroundColor : "#c02c3a"}}></input>
+                </Link>
+                <input type="button" className="form-control btn-lg btn btn-success filtercss mt-3" value="CHECKOUT" onClick={()=>this.onCheckOut()}></input>
+                </div>
+                :
+                <input type="text" className="form-control btn-lg  btn-secondary filtercss mt-3 text-center" value="Shop First before Checkout!" ></input>
+                }
+                   
                    </div>
                
             
@@ -234,10 +253,11 @@ const mapStateToProps = (state) => {
        currentUser : state.CURRENT_USER_DATA.currentUser,
        IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
        IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN,
-       saldouser : state.CURRENT_USER_DATA.saldo
+       saldouser : state.CURRENT_USER_DATA.saldo,
+       cartlength : state.CURRENT_USER_DATA.cartlength
     }
 }
-export default connect(mapStateToProps, {Transaksi})(Transaction);
+export default connect(mapStateToProps, {Transaksi, updateCart})(Transaction);
 
 // this.state.cart.map((val, index)=>{
         //     // MASUKIN KE AXIOS TIAP ITEM DI CART

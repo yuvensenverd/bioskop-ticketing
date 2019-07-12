@@ -18,6 +18,8 @@ import { connect } from 'react-redux'
 import { UserLogOut, Transaksi } from './../redux/actions/countActions'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Axios from 'axios'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingCart} from '@fortawesome/free-solid-svg-icons'
 
 
 
@@ -33,7 +35,8 @@ class Header extends React.Component {
     this.state = {
       isOpen: false,
       modalOpen : false,
-      statesaldo : this.props.saldouser
+      statesaldo : this.props.saldouser,
+      cartnum : 0
       
     };
   }
@@ -69,9 +72,10 @@ class Header extends React.Component {
     .then((res)=>{
       console.log(res.data)
       Axios.patch('http://localhost:2000/users/'+res.data[0].id, {saldo : saldo})
-      .then((res)=>{
+      .then((res2)=>{
         this.setState({
-          statesaldo : saldo
+          statesaldo : saldo,
+          
         })
         this.props.Transaksi(parseInt(this.refs.reftopup.value))
         window.alert("Top Up Berhasil")
@@ -181,6 +185,8 @@ class Header extends React.Component {
               :
               null
               }
+
+              
                 
             {/* UNTUK MENGHILANGKAN LOGIN LINK */}
             {this.props.IS_LOGGED_IN === false ? 
@@ -241,7 +247,20 @@ class Header extends React.Component {
            
             </div>
           }
-            
+
+          {this.props.IS_LOGGED_IN === false 
+          ?
+          null
+          :
+          <div className="headername justify-content-center pt-2">
+                <Link to='/pages/transaction' className="headername mr-3">
+                   <FontAwesomeIcon className="Booked" size="2x"  icon={faShoppingCart} style={{color : "#c02c3a"}}></FontAwesomeIcon>
+                   <div className="cartnum">{this.props.cartlength}</div>
+                </Link>
+              </div>
+          
+          }
+          
             
             </Nav>
           </Collapse>
@@ -256,7 +275,8 @@ const mapStateToProps = (state) => {
        currentUser : state.CURRENT_USER_DATA.currentUser,
        IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
        IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN,
-       saldouser : state.CURRENT_USER_DATA.saldo
+       saldouser : state.CURRENT_USER_DATA.saldo,
+       cartlength : state.CURRENT_USER_DATA.cartlength
        
     }
 }

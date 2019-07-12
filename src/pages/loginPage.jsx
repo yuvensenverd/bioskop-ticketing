@@ -16,6 +16,18 @@ class loginPage extends React.Component{
     componentDidMount(){
         // this.getLoginData()
     }
+    // getSaldo = (userid) =>{
+    //     Axios.get('http://localhost:2000/users?username='+userid)
+    //         .then((res)=>{
+                
+            
+    //              return res.data[0].saldo
+                
+    //         }) 
+    //         .catch((err)=>{
+    //             return err
+    //         })
+    // }
     // getLoginData = () => {
     
     //     Axios.get('http://localhost:2000/users/')
@@ -50,10 +62,12 @@ class loginPage extends React.Component{
                     })
                    
                     if(res.data[0].role === "user"){
-                        return this.props.logUser(userid)
+                        console.log(res.data[0].saldo)
+                        return this.props.logUser(userid, res.data[0].saldo)
                     }else if(res.data[0].role === "admin"){
-                       
-                        return this.props.logAdmin(userid)
+
+                        console.log(res.data[0].saldo)
+                        return this.props.logAdmin(userid,res.data[0].saldo)
                     }
                 }
             })
@@ -93,6 +107,7 @@ class loginPage extends React.Component{
     }
 
     render(){
+        
         const { redirect } = this.state
         if(redirect) {
            return <Redirect to="/" push={true} />
@@ -103,6 +118,7 @@ class loginPage extends React.Component{
         return (
             
             <div className="mycontainer">
+                
                 <div className='row justify-content-center mt-5'>
                     <div className="col-md-8">
                         <Paper className="p-5 mt-5">
@@ -128,7 +144,8 @@ const mapStateToProps = (state) => {
     return{
        currentUser : state.CURRENT_USER_DATA.currentUser,
        IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
-       IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN
+       IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN,
+       saldouser : state.CURRENT_USER_DATA.saldo
        
     }
 }

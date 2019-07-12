@@ -32,25 +32,25 @@ class HistoryTransaction extends React.Component{
             console.log(err)
         })
 
-        Axios.get('http://localhost:2000/movies')
-        .then((res)=>{
-          var listorder =  res.data.sort((a,b)=>{
-                return (a.id) - (b.id)
-            }) // SORT ASCENDING
+        // Axios.get('http://localhost:2000/movies')
+        // .then((res)=>{
+        //   var listorder =  res.data.sort((a,b)=>{
+        //         return (a.id) - (b.id)
+        //     }) // SORT ASCENDING
          
-            var arr = []
-            listorder.map((val)=>{
-                arr.push(val.title)
-            })
-            this.setState({
-                movielist : arr
-            })
+        //     var arr = []
+        //     listorder.map((val)=>{
+        //         arr.push(val.title)
+        //     })
+        //     this.setState({
+        //         movielist : arr
+        //     })
             
 
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
+        // })
+        // .catch((err)=>{
+        //     console.log(err)
+        // })
         
        
     }
@@ -63,8 +63,8 @@ class HistoryTransaction extends React.Component{
                 return(
                     <tr>
                         <td>{index+1}</td>
-                        <td>{this.state.movielist[val.movId-1]}</td>
-                        <td>{val.ticket}</td>
+                        <td>{this.state.userdata[index].movtitle}</td>
+                        <td>{val.seat.join(" ,")+ "   (" + val.seat.length + " Ticket)"}</td>
                         <td>{"Rp. " + numeral(val.totalprice).format(0,0)}</td>
                     </tr>
                 )

@@ -1,19 +1,30 @@
-export const logUser = (id) =>{
+import Axios from 'axios'
+
+
+export const logUser = (id, saldo) =>{
     return {
         type : "USER",
-        payload : {username : id}
+        payload : {username : id, saldo : saldo}
     }
 }
 
-export const logAdmin = (id) =>{
+export const logAdmin = (id, saldo) =>{
     return {
         type : "ADMIN",
-        payload : {username : id}
+        payload : {username : id, saldo : saldo}
     }
 }
 
 export const UserLogOut = () => {
     return{
         type : "LOGOUT"
+    }
+}
+
+export const Transaksi = (number)=> {
+    console.log(number)
+    return{
+        type: "TRANSAKSI",
+        payload : number
     }
 }

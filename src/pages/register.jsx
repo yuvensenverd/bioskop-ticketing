@@ -11,7 +11,7 @@ class Register extends React.Component{
     state={
         userdata : [],
         err : "",
-        isLoading : false
+        isLoading : false,
     }
 
     componentDidMount(){

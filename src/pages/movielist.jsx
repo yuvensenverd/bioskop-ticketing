@@ -80,6 +80,7 @@ class movielist extends React.Component{
         return (
             
             <div className='mycontainer pt-5'>
+                
                 <center>
                     <div className="d-flex flex-row justify-content-center">
                         {/* <div class="dropdown mt-3">

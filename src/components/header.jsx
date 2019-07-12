@@ -11,16 +11,18 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem } from 'reactstrap';
+import numeral from 'numeral'
 
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { UserLogOut } from './../redux/actions/countActions'
+import { UserLogOut, Transaksi } from './../redux/actions/countActions'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import Axios from 'axios'
 
 
 
-
-
-
+// LOGIN ID LAIN BLM UPDATE
+// CHECKOUT BLM UPDATE
 
 // REACT HOOKS
 class Header extends React.Component {
@@ -29,21 +31,84 @@ class Header extends React.Component {
 
     this.toggle = this.toggle.bind(this);
     this.state = {
-      isOpen: false
+      isOpen: false,
+      modalOpen : false,
+      statesaldo : this.props.saldouser
+      
     };
   }
   componentDidUpdate =() => {
-    console.log(this.props)
+
+    // this.setState({
+    //   statesaldo : this.props.saldouser
+    // })
   }
   toggle() {
     this.setState({
       isOpen: !this.state.isOpen
     });
   }
+  closeModal =() => {
+    this.setState({
+      modalOpen : false
+    })
+  }
+  onClickTopUp = () => {
+    var saldo = parseInt(this.refs.reftopup.value)
+    saldo = saldo + this.props.saldouser
+    console.log(saldo)
+   
+    // Axios.patch('http://localhost:2000/users/2', {saldo : saldo})
+    // .then((res)=>{
+    //   window.alert("top up berhasil")
+
+      
+    // })
+
+    Axios.get('http://localhost:2000/users?username='+this.props.currentUser)
+    .then((res)=>{
+      console.log(res.data)
+      Axios.patch('http://localhost:2000/users/'+res.data[0].id, {saldo : saldo})
+      .then((res)=>{
+        this.setState({
+          statesaldo : saldo
+        })
+        this.props.Transaksi(parseInt(this.refs.reftopup.value))
+        window.alert("Top Up Berhasil")
+        this.closeModal()
+        
+      })
+    })
+    .catch((err)=>{
+
+    })
+    
+    
+  }
   render() {
     return (
       <div>
-       
+        <Modal isOpen={this.state.modalOpen} toggle={this.closeModal} size="lg" style={{maxWidth: '800px', width: '80%'}}>
+        <ModalHeader>
+            Top Up Saldo
+        </ModalHeader>
+        <ModalBody>
+            <div> Jumlah Saldo </div>
+            <input type="text"  className="form-control mb-4" placeholder="saldo" value={this.props.saldouser} disabled/>
+            <input type="number" ref="reftopup" className="form-control mb-2" placeholder="Jumlah Top Up"/>
+         
+
+            {/* <input type="number" ref="inputpt" min="1" max="24" className="form-control mb-2" placeholder="Playtime" /> */}
+                          
+                            
+                            
+            <p id="warningbutton" style={{color : "red"}}> </p>
+        </ModalBody>
+        <ModalFooter>
+        <input type="button" value="TOP UP" className="btn btn-success " onClick={()=>this.onClickTopUp()} />
+        <input type="button" value="CANCEL" className="btn btn-danger" onClick={()=>this.closeModal()} />
+        </ModalFooter>
+         </Modal>
         <Navbar  className="navbarheader" expand="md" style={{height: "45px"}} >
         <Link to='/' className="headername">
           <NavbarBrand  className="headername" style={{color : "#ff4422", fontSize : "20px", fontWeight : "bolder"}}>Home</NavbarBrand>
@@ -72,6 +137,7 @@ class Header extends React.Component {
                   <DropdownItem>
                 {this.props.currentUser !== "" && this.props.IS_LOGGED_IN === true
                 ?
+                <div>
                 <DropdownItem className="headername">
                   <Link to="/">
                     <p onClick={() => this.props.UserLogOut()}>Logout</p>
@@ -79,6 +145,8 @@ class Header extends React.Component {
                     {/* Function Here */}
                   </Link>
                 </DropdownItem>
+               
+                </div>
                 :
                 this.props.IS_LOGGED_IN === false
                 ?
@@ -102,8 +170,8 @@ class Header extends React.Component {
               </UncontrolledDropdown>
              
               {this.props.IS_ADMIN === true ?
-              <div className="headername mr-4 justify-content-center pt-2">
-                <Link to='/manage' className="headername mr-4">
+              <div className="headername  justify-content-center pt-2">
+                <Link to='/manage' className="headername mr-3">
                     MANAGE 
                 </Link>
               </div>
@@ -136,7 +204,7 @@ class Header extends React.Component {
             null
               }
 
-            {this.props.IS_LOGGED_IN === true ? 
+            {/* {this.props.IS_LOGGED_IN === true ? 
             <div className="headername  justify-content-center pt-2">
             <Link to={'/history'} className="headername mr-4">
                 History
@@ -144,7 +212,36 @@ class Header extends React.Component {
             </div>
             :
             null
-            }
+            } */}
+
+
+            {this.props.IS_LOGGED_IN === false ? 
+            null
+          :
+            <div className="headername  justify-content-center ">
+              <UncontrolledDropdown className="headername " nav inNavbar>
+                <DropdownToggle className="headername" nav caret>
+                {"Saldo : Rp. " + numeral(this.props.saldouser).format(0,0)} 
+                </DropdownToggle>
+                    <DropdownMenu style={{backgroundColor : "lightgrey"}} right>
+                      <DropdownItem className="headername filtercss" style={{color : "black"}}>
+               
+                  <p onClick={() => this.setState({modalOpen : true})}>Top Up Saldo</p>
+                  
+                  {/* Function Here */}
+              
+                    </DropdownItem>
+                      <DropdownItem className="headername filtercss" >
+                          <Link to={'/history'} style={{color : "black"}} >
+                                History
+                          </Link>
+                      </DropdownItem>
+                    </DropdownMenu>
+              </UncontrolledDropdown>
+           
+            </div>
+          }
+            
             
             </Nav>
           </Collapse>
@@ -158,9 +255,10 @@ const mapStateToProps = (state) => {
     return{
        currentUser : state.CURRENT_USER_DATA.currentUser,
        IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
-       IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN
+       IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN,
+       saldouser : state.CURRENT_USER_DATA.saldo
        
     }
 }
 
-export default connect(mapStateToProps, { UserLogOut })(Header);
+export default connect(mapStateToProps, { UserLogOut, Transaksi })(Header);

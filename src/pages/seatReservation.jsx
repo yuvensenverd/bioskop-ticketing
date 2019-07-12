@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 import numeral from 'numeral'
 import Axios from 'axios';
 import PageNotFound from './../pages/PageNotFound'
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom'
 
 
 
@@ -15,8 +17,11 @@ class seatReservation extends React.Component{
         seats : [],
         seatReserved : [],
         seatAvailable : [],
-        currentMovie : [],
+        currentMovie : "",
         seatBooked : [], // ["A2", "B5"],
+        price : 35000,
+        finishUpdate : false
+
         
     }
     componentDidMount = () => {
@@ -24,7 +29,7 @@ class seatReservation extends React.Component{
         if(this.props.location.state !== undefined){
             
             const moviename = this.props.location.state.movie
-            console.log(moviename)
+     
             Axios.get('http://localhost:2000/movies?title='+moviename)
             .then((res) => {
                 var booked = res.data[0].booked
@@ -154,20 +159,66 @@ class seatReservation extends React.Component{
             
         }else {
             return (
-                <Link to={{pathname : "/pages/transaction", state : {seatnumber : this.state.seatReserved, moviename : this.state.currentMovie}}}>
-                    <input type="button" className="form-control btn-danger filtercss mb-5" value="PROCEED"></input>
-                </Link>
+                // <Link to={{pathname : "/pages/transaction", state : {seatnumber : this.state.seatReserved, moviename : this.state.currentMovie}}}>
+                    <input type="button" className="form-control btn-danger filtercss mb-5" value="Add to Cart" onClick={()=>this.addToCart()}></input>
+                // {/* </Link> */}
             )
         }
+    }
+
+    addToCart = () => {
+        Axios.get('http://localhost:2000/users?username='+this.props.currentUser)
+        .then((res)=>{
+            var cartuser = res.data[0].cart
+            var arr = {
+                movtitle : this.state.currentMovie,
+                seat : this.state.seatReserved,
+                totalprice : this.state.price * this.state.seatReserved.length
+            }
+            cartuser.push(arr)
+            
+            Axios.patch('http://localhost:2000/users/' + res.data[0].id, {cart : cartuser})
+            .then((res)=>{
+                
+                this.setState({
+                    finishUpdate : true
+                })
+                Axios.get('http://localhost:2000/movies?title='+this.state.currentMovie)
+                .then((resmov)=>{
+               
+                    var moviebook = resmov.data[0].booked
+                  
+                    moviebook = [...resmov.data[0].booked, ...this.state.seatReserved]
+                   
+                    Axios.patch('http://localhost:2000/movies/'+resmov.data[0].id, {booked : moviebook})
+                    .then((ress)=>{
+                        console.log("Berhasil Seat ")
+                    })
+                })
+                .catch((err)=>{
+
+                })
+            })
+        })
+        .catch((err)=>{
+
+        })
     }
    
     
     render(){
+        if(this.state.finishUpdate === true){
+            return(
+                <Redirect to={{pathname : "/pages/transaction", state : {seatnumber : this.state.seatReserved, moviename : this.state.currentMovie}}}>
+                
+                 </Redirect> 
+            )
+        }
         console.log(this.props.location.state)
         if(this.props.location.state === undefined){
-            console.log("Masuk")
+         
             return (
-                console.log("Masuk"),
+              
                 <PageNotFound/>
             )
         }
@@ -207,4 +258,13 @@ class seatReservation extends React.Component{
     }
 }
 
-export default seatReservation;
+const mapStateToProps = (state) => {
+    return{
+       currentUser : state.CURRENT_USER_DATA.currentUser,
+       IS_ADMIN : state.CURRENT_USER_DATA.IS_ADMIN,
+       IS_LOGGED_IN : state.CURRENT_USER_DATA.IS_LOGGED_IN,
+       saldouser : state.CURRENT_USER_DATA.saldo
+    }
+}
+
+export default connect(mapStateToProps)( seatReservation);

@@ -28,9 +28,9 @@ class App extends React.Component{
       Axios.get(Url + '/users?username=' + username)
       .then((res)=> {
         if(res.data[0].role === "user"){
-          this.props.logUser(res.data[0].username)
+          this.props.logUser(res.data[0].username, res.data[0].saldo)
         }else if(res.data[0].role === "admin"){
-          this.props.logAdmin(res.data[0].username)
+          this.props.logAdmin(res.data[0].username, res.data[0].saldo)
         }
       })
       .catch((err) =>{
